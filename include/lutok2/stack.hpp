@@ -305,7 +305,12 @@ namespace lutok2 {
 		}
 
 		inline void * checkUserData(const int narg, const std::string& name){
-			return luaL_checkudata(state, narg, name.c_str());
+			if (lua_type(state, narg) == LUA_TUSERDATA){
+				return luaL_checkudata(state, narg, name.c_str());
+			}else{
+				return nullptr;
+			}
+			
 		}
 
 		/*
