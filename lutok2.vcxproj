@@ -11,13 +11,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include/common.hpp" />
-    <ClInclude Include="include/exceptions.hpp" />
-    <ClInclude Include="include/lutok2.hpp" />
-    <ClInclude Include="include/object.hpp" />
-    <ClInclude Include="include/stack.hpp" />
-    <ClInclude Include="include/stackdebugger.hpp" />
-    <ClInclude Include="include/state.hpp" />
+    <ClInclude Include="include/lutok2/common.hpp" />
+    <ClInclude Include="include/lutok2/exceptions.hpp" />
+    <ClInclude Include="include/lutok2/lutok2.hpp" />
+    <ClInclude Include="include/lutok2/object.hpp" />
+    <ClInclude Include="include/lutok2/stack.hpp" />
+    <ClInclude Include="include/lutok2/stackdebugger.hpp" />
+    <ClInclude Include="include/lutok2/state.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="test/test.cpp" />
@@ -54,10 +54,10 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>E:\projects\lutok2\include;$(IncludePath)</IncludePath>
+    <IncludePath>./include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>E:\projects\lutok2\include;$(IncludePath)</IncludePath>
+    <IncludePath>./include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

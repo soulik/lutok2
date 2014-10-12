@@ -1,4 +1,4 @@
-#include "lutok2.hpp"
+#include "lutok2/lutok2.hpp"
 
 using namespace lutok2;
 
