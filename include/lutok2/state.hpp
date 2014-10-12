@@ -74,8 +74,8 @@ namespace lutok2 {
 						
 					stack->setMetatable();
 				stack->setField("State");
-				stack->pop();
 			}
+			stack->pop();
 		}
 
 		void newState(){
