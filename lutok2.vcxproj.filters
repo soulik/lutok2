@@ -15,25 +15,25 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include/state.hpp">
+    <ClInclude Include="include/lutok2/common.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include/exceptions.hpp">
+    <ClInclude Include="include/lutok2/exceptions.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include/common.hpp">
+    <ClInclude Include="include/lutok2/lutok2.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include/stack.hpp">
+    <ClInclude Include="include/lutok2/object.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include/lutok2.hpp">
+    <ClInclude Include="include/lutok2/stack.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include/stackdebugger.hpp">
+    <ClInclude Include="include/lutok2/stackdebugger.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include/object.hpp">
+    <ClInclude Include="include/lutok2/state.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -41,5 +41,10 @@
     <ClCompile Include="test/test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="test\test.lua">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -4,11 +4,12 @@ namespace lutok2 {
 	class State;
 
 	typedef int (*cxx_function)(State &);
-	typedef int (*cxx_function_ex)(void *);
 	typedef std::function<int(State &)> Function;
 
 	typedef std::unordered_map<std::string, cxx_function> module;
 	static int cxx_function_wrapper(lua_State *);
+
+	static int free_current_state(lua_State *);
 };
 
 #include "exceptions.hpp"
@@ -23,8 +24,8 @@ namespace lutok2 {
 		luaL_getmetatable(L, "_lutok2");
 		if (lua_type(L, -1) == LUA_TTABLE){
 			lua_getfield(L, -1, "State");
-			if (lua_type(L, -1) == LUA_TLIGHTUSERDATA){
-				state = static_cast<State *>(lua_touserdata(L, -1));
+			if (lua_type(L, -1) == LUA_TUSERDATA){
+				state = *(static_cast<State **>(lua_touserdata(L, -1)));
 				lua_pop(L, 2);
 			}else{
 				lua_pop(L, 2);
@@ -47,4 +48,16 @@ namespace lutok2 {
 		}
 		return 0;
 	}
+
+	static int free_current_state(lua_State * L){
+		State * state = getCurrentState(L);
+		//free all stored object interfaces
+		for (std::unordered_map<std::string, BaseObject*>::iterator iter = state->interfaces.begin(); iter != state->interfaces.end(); iter++){
+			delete (iter->second);
+		}
+
+		delete state;
+		return 0;
+	}
+
 };

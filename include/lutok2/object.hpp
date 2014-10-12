@@ -5,8 +5,15 @@ namespace lutok2 {
 #define LUTOK_PROPERTY(KEY, GETTER_FN, SETTER_FN) properties[(KEY)] = PropertyPair(static_cast<Method>(GETTER_FN), static_cast<Method>(SETTER_FN));
 #define	LUTOK_METHOD(KEY, METHOD_FN) methods[(KEY)] = static_cast<Method>(METHOD_FN);
 
+	class BaseObject {
+		public:
+			virtual void getConstructor(){
+
+			}
+	};
+
 	template <class C>
-	class Object {
+	class Object : public BaseObject{
 	public:
 		typedef int (Object<C>::*Method) (State &, C *);
 		typedef struct std::pair< Method, Method > PropertyPair;
@@ -66,6 +73,11 @@ namespace lutok2 {
 			return 0;
 		}
 	public:
+		Object(Object & object){
+			this->state = object.state;
+			this->methods = object.methods;
+			this->properties = object.properties;
+		}
 		explicit Object(State * state){
 			this->state = state;
 		}

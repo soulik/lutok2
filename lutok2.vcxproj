@@ -22,6 +22,9 @@
   <ItemGroup>
     <ClCompile Include="test/test.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="test\test.lua" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{96673C1F-65CE-4A76-9F06-173A1ADAAD5D}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>

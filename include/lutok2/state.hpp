@@ -3,11 +3,13 @@
 
 namespace lutok2 {
 	class StackDebugger;
+	class BaseObject;
 
 	class State {
 	friend class Stack;
 	public:
 		Stack * stack;
+		std::unordered_map<std::string, BaseObject*> interfaces;
 	private:
 		lua_State * state;
 		bool owned;
@@ -31,15 +33,15 @@ namespace lutok2 {
 			stack->insert(-(nup+1));  /* move library table to below upvalues */
 		}
 	public:
-		State(){
+		State(bool lua_managed = false){
 			newState();
-			initState();
+			initState(lua_managed);
 		}
 
-		explicit State(lua_State * state){
+		explicit State(lua_State * state, bool lua_managed = true){
 			this->state = state;
 			owned = false;
-			initState();
+			initState(lua_managed);
 		}
 
 		~State(){
@@ -58,10 +60,20 @@ namespace lutok2 {
 			return (arg.state == state);
 		}
 
-		void initState(){
+		void initState(bool lua_managed = false){
 			stack = new Stack(state);
 			if (stack->newMetatable("_lutok2")){
-				stack->setField("State", static_cast<void*>(this));
+				//create local copy of State object in Lua State
+				State ** _state = static_cast<State**> (stack->newUserData(sizeof(State*)));
+				(*_state) = this;
+					//prepare metatable for State object
+					stack->newTable();
+					if (lua_managed) {
+						stack->setField<lua_CFunction>("__gc", free_current_state);
+					}
+						
+					stack->setMetatable();
+				stack->setField("State");
 				stack->pop();
 			}
 		}

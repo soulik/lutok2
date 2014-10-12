@@ -247,6 +247,11 @@ namespace lutok2 {
 			push<const std::string>(value);
 			lua_setfield(state, index, name.c_str());
 		}
+		
+		template<> inline void setField(const std::string & name, lua_CFunction value, const int index){
+				push<lua_CFunction>(value);
+				lua_setfield(state, index, name.c_str());
+		}
 
 		template<> inline void setField(const std::string & name, Function value, const int index){
 			push<Function>(value);
