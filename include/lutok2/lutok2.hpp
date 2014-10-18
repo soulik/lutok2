@@ -10,6 +10,14 @@ namespace lutok2 {
 	static int cxx_function_wrapper(lua_State *);
 
 	static int free_current_state(lua_State *);
+
+	class BaseObject {
+	public:
+		virtual void getConstructor(){
+
+		}
+	};
+
 };
 
 #include "exceptions.hpp"
@@ -19,6 +27,7 @@ namespace lutok2 {
 #include "object.hpp"
 
 namespace lutok2 {
+
 	static State * getCurrentState(lua_State * L){
 		State * state = nullptr;
 		luaL_getmetatable(L, "_lutok2");
@@ -58,16 +67,5 @@ namespace lutok2 {
 
 		delete state;
 		return 0;
-	}
-
-	template<class C> void State::registerInterface(const std::string & name){
-		BaseObject * interface = new C(this);
-		interfaces[name] = interface;
-		interface->getConstructor();
-	}
-
-	void State::registerInterface(const std::string & name, BaseObject * interface){
-		interfaces[name] = interface;
-		interface->getConstructor();
 	}
 };

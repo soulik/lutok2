@@ -5,13 +5,6 @@ namespace lutok2 {
 #define LUTOK_PROPERTY(KEY, GETTER_FN, SETTER_FN) properties[(KEY)] = PropertyPair(static_cast<Method>(GETTER_FN), static_cast<Method>(SETTER_FN));
 #define	LUTOK_METHOD(KEY, METHOD_FN) methods[(KEY)] = static_cast<Method>(METHOD_FN);
 
-	class BaseObject {
-		public:
-			virtual void getConstructor(){
-
-			}
-	};
-
 	template <class C>
 	class Object : public BaseObject{
 	public:

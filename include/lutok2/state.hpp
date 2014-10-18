@@ -147,8 +147,16 @@ namespace lutok2 {
 			Class interfaces
 		*/
 
-		template<class C> void registerInterface(const std::string &);
-		void registerInterface(const std::string &, BaseObject * );
+		template<class C> void registerInterface(const std::string & name){
+			BaseObject * interface = new C(this);
+			interfaces[name] = interface;
+			interface->getConstructor();
+		}
+
+		void registerInterface(const std::string & name, BaseObject * interface){
+			interfaces[name] = interface;
+			interface->getConstructor();
+		}
 	};
 };
 
