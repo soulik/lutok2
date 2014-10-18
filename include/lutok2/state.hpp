@@ -142,7 +142,13 @@ namespace lutok2 {
 			luaL_error(state, "%s", buffer);
 			va_end (args);
 		}
+		
+		/*
+			Class interfaces
+		*/
 
+		template<class C> void registerInterface(const std::string &);
+		void registerInterface(const std::string &, BaseObject * );
 	};
 };
 

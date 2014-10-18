@@ -68,7 +68,6 @@ public:
 int main(char ** argv, int argc){
 
 	State state;
-	state.interfaces["testObj"] = new LTestObj(&state);
 	state.openLibs();
 	
 	state.stack->push<Function>([](State & state) -> int{
@@ -81,7 +80,7 @@ int main(char ** argv, int argc){
 	});
 	state.stack->setGlobal("testing");
 
-	dynamic_cast<LTestObj*>(state.interfaces["testObj"])->getConstructor();
+	state.registerInterface<LTestObj>("testObj");
 	state.stack->setGlobal("testObj");
 
 	state.loadFile("test/test.lua");

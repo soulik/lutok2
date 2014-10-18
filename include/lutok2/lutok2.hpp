@@ -60,4 +60,14 @@ namespace lutok2 {
 		return 0;
 	}
 
+	template<class C> void State::registerInterface(const std::string & name){
+		BaseObject * interface = new C(this);
+		interfaces[name] = interface;
+		interface->getConstructor();
+	}
+
+	void State::registerInterface(const std::string & name, BaseObject * interface){
+		interfaces[name] = interface;
+		interface->getConstructor();
+	}
 };
