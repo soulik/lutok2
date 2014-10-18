@@ -157,6 +157,12 @@ namespace lutok2 {
 			interfaces[name] = interface;
 			interface->getConstructor();
 		}
+		
+		template<class C> C * getInterface(const std::string & name){
+			C * interface = dynamic_cast<C*>(state.interfaces[name]);
+			assert(interface);
+			return interface;
+		}
 	};
 };
 
