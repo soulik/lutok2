@@ -25,6 +25,12 @@ namespace lutok2 {
 			ObjWrapper * wrapper = static_cast<ObjWrapper *>(stack->checkUserData(index, typeid(this).name()));
 			return wrapper;
 		}
+
+		ObjWrapper * getWrapped(const int index, const std::string & typeName){
+			Stack * stack = state->stack;
+			ObjWrapper * wrapper = static_cast<ObjWrapper *>(stack->checkUserData(index, typeName));
+			return wrapper;
+		}
 	private:
 		int index(State & state, C * object){
 			Stack * stack = state.stack;
