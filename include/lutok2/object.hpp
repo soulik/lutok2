@@ -1,6 +1,8 @@
 #ifndef LUTOK2_OBJECT_H
 #define LUTOK2_OBJECT_H
 
+#include <forward_list>
+
 namespace lutok2 {
 #define LUTOK_PROPERTY(KEY, GETTER_FN, SETTER_FN) properties[(KEY)] = PropertyPair(static_cast<Method>(GETTER_FN), static_cast<Method>(SETTER_FN));
 #define	LUTOK_METHOD(KEY, METHOD_FN) methods[(KEY)] = static_cast<Method>(METHOD_FN);
@@ -30,6 +32,20 @@ namespace lutok2 {
 			Stack * stack = state->stack;
 			ObjWrapper * wrapper = static_cast<ObjWrapper *>(stack->checkUserData(index, typeName));
 			return wrapper;
+		}
+
+		ObjWrapper * getWrapped(const int index, const std::forward_list<std::string> & typeNames){
+			Stack * stack = state->stack;
+			ObjWrapper * wrapper = nullptr;
+
+			for (std::forward_list<std::string>::iterator iter = typeNames.begin(); iter != typeNames.end(); iter++){
+				wrapper = static_cast<ObjWrapper *>(stack->checkUserData(index, *iter));
+				if (wrapper != nullptr){
+					return wrapper;
+				}
+			}
+			
+			return nullptr;
 		}
 	private:
 		int index(State & state, C * object){
