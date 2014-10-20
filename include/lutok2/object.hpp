@@ -38,7 +38,7 @@ namespace lutok2 {
 			Stack * stack = state->stack;
 			ObjWrapper * wrapper = nullptr;
 
-			for (std::forward_list<std::string>::iterator iter = typeNames.begin(); iter != typeNames.end(); iter++){
+			for (std::forward_list<std::string>::const_iterator iter = typeNames.begin(); iter != typeNames.end(); iter++){
 				wrapper = static_cast<ObjWrapper *>(stack->checkUserData(index, *iter));
 				if (wrapper != nullptr){
 					return wrapper;
