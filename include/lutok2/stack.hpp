@@ -100,8 +100,13 @@ namespace lutok2 {
 			lua_rawseti(state, index, n);
 		}
 
-		inline void getField(const std::string & key, const int index){
+		inline void getField(const std::string & key, const int index = -2){
 			lua_getfield (state, index, key.c_str());
+		}
+
+		inline void getField(const int key, const int index = -2){
+			lua_pushinteger(state, key);
+			lua_gettable(state, index);
 		}
 
 		inline void setField(const std::string & key, const int index = -2){
