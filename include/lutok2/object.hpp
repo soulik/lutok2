@@ -22,13 +22,13 @@ namespace lutok2 {
 	private:
 		State * state;
 	protected:
-		ObjWrapper * getWrapped(const int index){
+		inline ObjWrapper * getWrapped(const int index){
 			Stack * stack = state->stack;
 			ObjWrapper * wrapper = static_cast<ObjWrapper *>(stack->checkUserData(index, typeid(this).name()));
 			return wrapper;
 		}
 
-		ObjWrapper * getWrapped(const int index, const std::string & typeName){
+		inline ObjWrapper * getWrapped(const int index, const std::string & typeName){
 			Stack * stack = state->stack;
 			ObjWrapper * wrapper = static_cast<ObjWrapper *>(stack->checkUserData(index, typeName));
 			return wrapper;
