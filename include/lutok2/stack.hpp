@@ -315,7 +315,22 @@ namespace lutok2 {
 			}else{
 				return nullptr;
 			}
-			
+		}
+
+		inline void * getUserData(const int narg, const std::string& name){
+			if (lua_type(state, narg) == LUA_TUSERDATA){
+				lua_getmetatable(state, narg);
+				luaL_getmetatable(state, name.c_str());
+				if (lua_equal(state, -2, -1) == 1){
+					lua_pop(state, 2);
+					return lua_touserdata(state, narg);
+				}else{
+					lua_pop(state, 2);
+					return nullptr;
+				}
+			}else{
+				return nullptr;
+			}
 		}
 
 		/*

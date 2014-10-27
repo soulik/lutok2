@@ -24,13 +24,13 @@ namespace lutok2 {
 	protected:
 		inline ObjWrapper * getWrapped(const int index){
 			Stack * stack = state->stack;
-			ObjWrapper * wrapper = static_cast<ObjWrapper *>(stack->checkUserData(index, typeid(this).name()));
+			ObjWrapper * wrapper = static_cast<ObjWrapper *>(stack->getUserData(index, typeid(this).name()));
 			return wrapper;
 		}
 
 		inline ObjWrapper * getWrapped(const int index, const std::string & typeName){
 			Stack * stack = state->stack;
-			ObjWrapper * wrapper = static_cast<ObjWrapper *>(stack->checkUserData(index, typeName));
+			ObjWrapper * wrapper = static_cast<ObjWrapper *>(stack->getUserData(index, typeName));
 			return wrapper;
 		}
 
@@ -39,7 +39,7 @@ namespace lutok2 {
 			ObjWrapper * wrapper = nullptr;
 
 			for (std::forward_list<std::string>::const_iterator iter = typeNames.begin(); iter != typeNames.end(); iter++){
-				wrapper = static_cast<ObjWrapper *>(stack->checkUserData(index, *iter));
+				wrapper = static_cast<ObjWrapper *>(stack->getUserData(index, *iter));
 				if (wrapper != nullptr){
 					return wrapper;
 				}
