@@ -54,6 +54,7 @@ namespace lutok2 {
 				return operator_getArray(state, object);
 			}else if (stack->is<LUA_TSTRING>(1)){
 				std::string key = stack->to<std::string>(1);
+				stack->remove(1);
 				try{
 					PropertyPair & pair = properties.at(key);
 					return (this->*(pair.first))(state, object);
@@ -78,6 +79,7 @@ namespace lutok2 {
 				return 0;
 			}else if (stack->is<LUA_TSTRING>(1)){
 				std::string key = stack->to<std::string>(1);
+				stack->remove(1);
 				try{
 					PropertyPair & pair = properties.at(key);
 					(this->*(pair.second))(state, object);

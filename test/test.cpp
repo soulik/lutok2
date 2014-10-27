@@ -55,7 +55,7 @@ public:
 		return 1;
 	}
 	int setValue(State & state, TestObj * object){
-		object->setValue(state.stack->to<std::string>(2));
+		object->setValue(state.stack->to<std::string>(1));
 		return 0;
 	}
 	int method(State & state, TestObj * object){
