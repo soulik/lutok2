@@ -61,7 +61,7 @@ namespace lutok2 {
 				}catch(std::out_of_range &){
 					try{
 						Method method = methods.at(key);
-						stack->push<Function>([&](State & state) -> int {
+						stack->push<Function>([=, &state](State & state) -> int {
 							return (this->*(method))(state, object);
 						});
 						return 1;
