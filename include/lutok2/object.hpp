@@ -60,7 +60,7 @@ namespace lutok2 {
 					return (this->*(pair.first))(state, object);
 				}catch(std::out_of_range &){
 					try{
-						Method method = methods.at(key);
+						Method & method = methods.at(key);
 						stack->push<Function>([=, &state](State & state) -> int {
 							return (this->*(method))(state, object);
 						});
