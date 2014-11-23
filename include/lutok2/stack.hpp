@@ -137,7 +137,7 @@ namespace lutok2 {
 			lua_pushstring(state, value);
 		}
 
-		template<> inline void push(const std::string value){
+		template<> inline void push(const std::string & value){
 			lua_pushstring(state, value.c_str());
 		}
 
@@ -176,7 +176,7 @@ namespace lutok2 {
 			lua_pushlightuserdata(state, value);
 		}
 
-		inline void pushLString(const std::string value, size_t len){
+		inline void pushLString(const std::string & value, size_t len){
 			lua_pushlstring(state, value.c_str(), len);
 		}
 
@@ -213,9 +213,9 @@ namespace lutok2 {
 			return lua_tonumber(state, index);
 		}
 
-		template<> inline std::string to(const int index){
+		template<> inline const std::string to(const int index){
 			const char * tmpString = lua_tostring(state, index);
-			return std::string(tmpString);
+			return tmpString;
 		}
 
 		template<> inline void * to(const int index){
@@ -281,6 +281,7 @@ namespace lutok2 {
 		inline int ref(const int index = LUA_REGISTRYINDEX){
 			return luaL_ref(state, index);
 		}
+
 		inline void  unref(const int ref, const int index = LUA_REGISTRYINDEX){
 			luaL_unref(state, index, ref);
 		}
@@ -379,6 +380,10 @@ namespace lutok2 {
 					throw std::runtime_error("Unknown error: " + errMessage);
 				}
 			}
+		}
+
+		inline void regValue(const int n){
+			lua_rawgeti(state, LUA_REGISTRYINDEX, n);
 		}
 		/*
 		StackDebugger debug(){

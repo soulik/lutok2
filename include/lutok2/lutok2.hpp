@@ -1,5 +1,7 @@
 #include "common.hpp"
 
+#define LUTOK2_NOT_USED(x) ((void)(x))
+
 namespace lutok2 {
 	class State;
 
@@ -55,7 +57,6 @@ namespace lutok2 {
 			state->error("Unhandled exception: %s", e.what());
 			return 1;
 		}
-		return 0;
 	}
 
 	static int free_current_state(lua_State * L){

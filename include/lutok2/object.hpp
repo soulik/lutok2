@@ -24,7 +24,7 @@ namespace lutok2 {
 	protected:
 		inline ObjWrapper * getWrapped(const int index){
 			Stack * stack = state->stack;
-			ObjWrapper * wrapper = static_cast<ObjWrapper *>(stack->getUserData(index, typeid(this).name()));
+			ObjWrapper * wrapper = static_cast<ObjWrapper *>(stack->getUserData(index, typeid(C).name()));
 			return wrapper;
 		}
 
@@ -53,7 +53,7 @@ namespace lutok2 {
 			if (stack->is<LUA_TNUMBER>(1)){
 				return operator_getArray(state, object);
 			}else if (stack->is<LUA_TSTRING>(1)){
-				std::string key = stack->to<std::string>(1);
+				const std::string key = stack->to<const std::string>(1);
 				stack->remove(1);
 				try{
 					PropertyPair & pair = properties.at(key);
@@ -78,7 +78,7 @@ namespace lutok2 {
 				operator_setArray(state, object);
 				return 0;
 			}else if (stack->is<LUA_TSTRING>(1)){
-				std::string key = stack->to<std::string>(1);
+				const std::string key = stack->to<const std::string>(1);
 				stack->remove(1);
 				try{
 					PropertyPair & pair = properties.at(key);
@@ -98,7 +98,7 @@ namespace lutok2 {
 		explicit Object(State * state){
 			this->state = state;
 		}
-		~Object(){
+		virtual ~Object(){
 
 		}
 
@@ -106,12 +106,14 @@ namespace lutok2 {
 		PropertyMap properties;
 
 		int nullMethod (State & state, C * object){
+			LUTOK2_NOT_USED(state);
+			LUTOK2_NOT_USED(object);
 			return 0;
 		};
 
 		void prepareMetatable(){
 			Stack * stack = state->stack;
-			const char * tname = typeid(this).name();
+			const char * tname = typeid(C).name();
 			if (stack->newMetatable(tname)){
 				stack->setField("typename", tname);
 				stack->setField<Function>("__gc", [this](State & state) -> int {
@@ -122,7 +124,7 @@ namespace lutok2 {
 					return 0;
 				});
 				stack->setField<Function>("__typename", [this](State & state) -> int {
-					C * object = get(1);
+					//C * object = get(1);
 					state.stack->push(typeid(C).name());
 					return 1;
 				});
@@ -183,7 +185,7 @@ namespace lutok2 {
 					if (retvals<=0){
 						char buffer[128];
 						sprintf(buffer, "userdata: 0x%08x", static_cast<void*>(obj));
-						state.stack->push<std::string>(buffer);
+						state.stack->push<const std::string &>(buffer);
 						return 1;
 					}else{
 						return retvals;
@@ -237,10 +239,13 @@ namespace lutok2 {
 		*/
 
 		virtual C * constructor(State & state){
+			LUTOK2_NOT_USED(state);
 			return nullptr;
 		}
 
 		virtual void destructor(State & state, C * object){
+			LUTOK2_NOT_USED(state);
+			LUTOK2_NOT_USED(object);
 		}
 
 		/*
@@ -248,58 +253,96 @@ namespace lutok2 {
 		*/
 
 		virtual int operator_add(State & state, C * a, C * b){
+			LUTOK2_NOT_USED(state);
+			LUTOK2_NOT_USED(a);
+			LUTOK2_NOT_USED(b);
 			return 0;
 		}
 
 		virtual int operator_sub(State & state, C * a, C * b){
+			LUTOK2_NOT_USED(state);
+			LUTOK2_NOT_USED(a);
+			LUTOK2_NOT_USED(b);
 			return 0;
 		}
 
 		virtual int operator_mul(State & state, C * a, C * b){
+			LUTOK2_NOT_USED(state);
+			LUTOK2_NOT_USED(a);
+			LUTOK2_NOT_USED(b);
 			return 0;
 		}
 
 		virtual int operator_div(State & state, C * a, C * b){
+			LUTOK2_NOT_USED(state);
+			LUTOK2_NOT_USED(a);
+			LUTOK2_NOT_USED(b);
 			return 0;
 		}
 
 		virtual int operator_mod(State & state, C * a, C * b){
+			LUTOK2_NOT_USED(state);
+			LUTOK2_NOT_USED(a);
+			LUTOK2_NOT_USED(b);
 			return 0;
 		}
 
 		virtual int operator_pow(State & state, C * a, C * b){
+			LUTOK2_NOT_USED(state);
+			LUTOK2_NOT_USED(a);
+			LUTOK2_NOT_USED(b);
 			return 0;
 		}
 
 		virtual int operator_unm(State & state, C * a){
+			LUTOK2_NOT_USED(state);
+			LUTOK2_NOT_USED(a);
 			return 0;
 		}
 
 		virtual int operator_concat(State & state, C * a, C * b){
+			LUTOK2_NOT_USED(state);
+			LUTOK2_NOT_USED(a);
+			LUTOK2_NOT_USED(b);
 			return 0;
 		}
 
 		virtual int operator_len(State & state, C * a){
+			LUTOK2_NOT_USED(state);
+			LUTOK2_NOT_USED(a);
 			return 0;
 		}
 
 		virtual int operator_eq(State & state, C * a, C * b){
+			LUTOK2_NOT_USED(state);
+			LUTOK2_NOT_USED(a);
+			LUTOK2_NOT_USED(b);
 			return 0;
 		}
 
 		virtual int operator_lt(State & state, C * a, C * b){
+			LUTOK2_NOT_USED(state);
+			LUTOK2_NOT_USED(a);
+			LUTOK2_NOT_USED(b);
 			return 0;
 		}
 
 		virtual int operator_le(State & state, C * a, C * b){
+			LUTOK2_NOT_USED(state);
+			LUTOK2_NOT_USED(a);
+			LUTOK2_NOT_USED(b);
 			return 0;
 		}
 
 		virtual int operator_call(State & state, C * a){
+			LUTOK2_NOT_USED(state);
+			LUTOK2_NOT_USED(a);
 			return 0;
 		}
 
 		virtual int operator_tostring(State & state, C * a){
+			LUTOK2_NOT_USED(state);
+			LUTOK2_NOT_USED(a);
 			return 0;
 		}
 
@@ -308,10 +351,14 @@ namespace lutok2 {
 		*/
 
 		virtual int operator_getArray(State & state, C * a){
+			LUTOK2_NOT_USED(state);
+			LUTOK2_NOT_USED(a);
 			return 0;
 		}
 
 		virtual void operator_setArray(State & state, C * a){
+			LUTOK2_NOT_USED(state);
+			LUTOK2_NOT_USED(a);
 		}
 	
 	};

@@ -36,7 +36,7 @@ public:
 		TestObj * obj = nullptr;
 		Stack * stack = state.stack;
 		if (stack->is<LUA_TSTRING>(1)){
-			std::string value = stack->to<std::string>(1);
+			const std::string value = stack->to<const std::string>(1);
 			obj = new TestObj(value);
 		}
 		
@@ -51,15 +51,16 @@ public:
 	}
 
 	int getValue(State & state, TestObj * object){
-		state.stack->push<std::string>(object->getValue());
+		state.stack->push<const std::string &>(object->getValue());
 		return 1;
 	}
 	int setValue(State & state, TestObj * object){
-		object->setValue(state.stack->to<std::string>(1));
+		const std::string value = state.stack->to<const std::string>(1);
+		object->setValue(value);
 		return 0;
 	}
 	int method(State & state, TestObj * object){
-		state.stack->push<std::string>("Hello");
+		state.stack->push<const std::string &>("Hello");
 		return 1;
 	}
 };
