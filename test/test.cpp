@@ -32,14 +32,14 @@ public:
 		LUTOK_PROPERTY("value", &LTestObj::getValue, &LTestObj::setValue);
 		LUTOK_METHOD("method", &LTestObj::method);
 	}
-	TestObj * constructor(State & state){
+	TestObj * constructor(State & state, bool & managed){
 		TestObj * obj = nullptr;
 		Stack * stack = state.stack;
 		if (stack->is<LUA_TSTRING>(1)){
 			const std::string value = stack->to<const std::string>(1);
 			obj = new TestObj(value);
 		}
-		
+		managed = true;
 		return obj;
 	}
 	void destructor(State & state, TestObj * object){

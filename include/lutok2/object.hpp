@@ -201,9 +201,10 @@ namespace lutok2 {
 				stack->newTable();
 				stack->setField<Function>("__call", [this](State & state) -> int {
 					state.stack->remove(1);
-					C * obj = constructor(state);
+					bool managed = true;
+					C * obj = constructor(state, managed);
 					if (obj != nullptr){
-						push(obj, true);
+						push(obj, managed);
 						return 1;
 					}else{
 						state.error("Couldn't create object: %s", typeid(C).name());
@@ -238,8 +239,9 @@ namespace lutok2 {
 		Constructor/Destructor
 		*/
 
-		virtual C * constructor(State & state){
+		virtual C * constructor(State & state, bool & managed){
 			LUTOK2_NOT_USED(state);
+			LUTOK2_NOT_USED(managed);
 			return nullptr;
 		}
 
