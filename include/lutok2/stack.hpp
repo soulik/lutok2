@@ -261,7 +261,21 @@ namespace lutok2 {
 			lua_call(state, nargs, nresults);
 		}
 
-		void pcall(const int nargs, const int nresults, const int errFunction = 0);
+		void pcall(const int nargs, const int nresults, const int errFunction = 0){
+			int result = lua_pcall(state, nargs, nresults, errFunction);
+			if (result != 0){
+				const std::string errMessage = lua_tostring(state, -1);
+				if (result == LUA_ERRRUN){
+					throw std::runtime_error("Runtime error: " + errMessage);
+				}else if(result == LUA_ERRMEM){
+					throw std::runtime_error("Allocation error: " + errMessage);
+				}else if(result == LUA_ERRERR){
+					throw std::runtime_error("Error handler error: " + errMessage);
+				}else{
+					throw std::runtime_error("Unknown error: " + errMessage);
+				}
+			}	
+		}
 
 		inline void regValue(const int n){
 			lua_rawgeti(state, LUA_REGISTRYINDEX, n);
@@ -392,21 +406,6 @@ namespace lutok2 {
 		lua_setfield(state, index, name.c_str());
 	}
 
-	void Stack::pcall(const int nargs, const int nresults, const int errFunction){
-		int result = lua_pcall(state, nargs, nresults, errFunction);
-		if (result != 0){
-			const std::string errMessage = to<const std::string>();
-			if (result == LUA_ERRRUN){
-				throw std::runtime_error("Runtime error: " + errMessage);
-			}else if(result == LUA_ERRMEM){
-				throw std::runtime_error("Allocation error: " + errMessage);
-			}else if(result == LUA_ERRERR){
-				throw std::runtime_error("Error handler error: " + errMessage);
-			}else{
-				throw std::runtime_error("Unknown error: " + errMessage);
-			}
-		}
-	}
 };
 
 #endif
