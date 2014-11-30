@@ -15,7 +15,7 @@ namespace lutok2 {
 		}
 		~StackDebugger(){
 			if (stackItems != stack->getTop()){
-				throw std::exception("Stack corruption detected!");
+				throw std::runtime_error("Stack corruption detected!");
 			}
 		}
 		void setReturnValues(int count){

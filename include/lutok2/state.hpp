@@ -25,7 +25,7 @@ namespace lutok2 {
 				stack->pop();  /* remove previous result */
 				/* try global variable (and create one if it does not exist) */
 				if (findTable(LUA_GLOBALSINDEX, name, size ) != NULL)
-					error("Name conflict for module " LUA_QS, name);
+					error("Name conflict for module " LUA_QS, name.c_str());
 				stack->pushValue(-1);
 				stack->setField(name, -3);  /* _LOADED[name] = new table */
 			}
@@ -119,7 +119,7 @@ namespace lutok2 {
 
 			for (std::unordered_map< std::string, cxx_function >::const_iterator
 				iter = members.begin(); iter != members.end(); iter++) {
-					stack->push<std::string>((*iter).first);
+					stack->push<const std::string &>((*iter).first);
 					stack->push<cxx_function>((*iter).second);
 					stack->setTable(-3);
 			}
