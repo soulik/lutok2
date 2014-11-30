@@ -84,7 +84,11 @@ int main(char ** argv, int argc){
 	state.registerInterface<LTestObj>("testObj");
 	state.stack->setGlobal("testObj");
 
-	state.loadFile("test/test.lua");
-	state.stack->call(0,0);
+	try {
+		state.loadFile("test/test.lua");
+		state.stack->call(0,0);
+	}catch(std::exception & e){
+		printf("Can't load test file: %s", e.what());
+	}
 	return 0;
 }

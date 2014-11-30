@@ -120,46 +120,11 @@ namespace lutok2 {
 		template<typename T> inline void push(T value);
 		template<typename T> inline T to(const int index = -1);
 		template<typename T> inline void setField(const std::string & name, T value, const int index = -2);
-		
-		template<> inline void push(int value){
-			lua_pushinteger(state, value);
-		}
-		
-		template<> inline void push(LUA_NUMBER value){
-			lua_pushnumber(state, value);
-		}
-
-		template<> inline void push(bool value){
-			lua_pushboolean(state, value);
-		}
-
-		template<> inline void push(const char * value){
-			lua_pushstring(state, value);
-		}
-
-		template<> inline void push(const std::string & value){
-			lua_pushstring(state, value.c_str());
-		}
-
-		template<> inline void push(lua_CFunction value){
-			lua_pushcfunction(state, value);
-		}
-
-		template<> inline void push(Function value){
-			Function ** wrappedFunction = static_cast<Function **>(newUserData(sizeof(Function*)));
-			*wrappedFunction = new Function(value);
-			pushClosure(cxx_function_wrapper, 1);
-		}
 
 		inline void push(Function value, int n){
 			Function ** wrappedFunction = static_cast<Function **>(newUserData(sizeof(Function*)));
 			*wrappedFunction = new Function(value);
 			pushClosure(cxx_function_wrapper, n + 1);
-		}
-		template<> inline void push(cxx_function value){
-			Function ** wrappedFunction = static_cast<Function **>(newUserData(sizeof(Function*)));
-			*wrappedFunction = new Function(value);
-			pushClosure(cxx_function_wrapper, 1);
 		}
 
 		inline void push(cxx_function value, int n){
@@ -170,10 +135,6 @@ namespace lutok2 {
 
 		inline void pushClosure(lua_CFunction fn, int n){
 			lua_pushcclosure(state, fn, n);
-		}
-
-		template<> inline void push(void * value){
-			lua_pushlightuserdata(state, value);
 		}
 
 		inline void pushLString(const std::string & value, size_t len){
@@ -201,76 +162,10 @@ namespace lutok2 {
 			lua_pushvalue(state, index);
 		}
 
-		template<> inline bool to(const int index){
-			return lua_toboolean(state, index) == 1;
-		}
-
-		template<> inline int to(const int index){
-			return lua_tointeger(state, index);
-		}
-
-		template<> inline LUA_NUMBER to(const int index){
-			return lua_tonumber(state, index);
-		}
-
-		template<> inline const std::string to(const int index){
-			const char * tmpString = lua_tostring(state, index);
-			return tmpString;
-		}
-
-		template<> inline void * to(const int index){
-			return lua_touserdata(state, index);
-		}
-
 		inline std::string toLString(const int index = -1){
 			size_t len = 0;
 			const char * tmpString = lua_tolstring(state, index, &len);
 			return std::string(tmpString, len);
-		}
-
-		template<> inline void setField(const std::string & name, bool value, const int index){
-			push<bool>(value);
-			lua_setfield(state, index, name.c_str());
-		}
-
-		template<> inline void setField(const std::string & name, int value, const int index){
-			push<int>(value);
-			lua_setfield(state, index, name.c_str());
-		}
-
-		template<> inline void setField(const std::string & name, LUA_NUMBER value, const int index){
-			push<LUA_NUMBER>(value);
-			lua_setfield(state, index, name.c_str());
-		}
-
-		template<> inline void setField(const std::string & name, const char * value, const int index){
-			push<const char *>(value);
-			lua_setfield(state, index, name.c_str());
-		}
-
-		template<> inline void setField(const std::string & name, const std::string & value, const int index){
-			push<const std::string>(value);
-			lua_setfield(state, index, name.c_str());
-		}
-		
-		template<> inline void setField(const std::string & name, lua_CFunction value, const int index){
-				push<lua_CFunction>(value);
-				lua_setfield(state, index, name.c_str());
-		}
-
-		template<> inline void setField(const std::string & name, Function value, const int index){
-			push<Function>(value);
-			lua_setfield(state, index, name.c_str());
-		}
-
-		template<> inline void setField(const std::string & name, cxx_function value, const int index){
-			push<cxx_function>(value);
-			lua_setfield(state, index, name.c_str());
-		}
-
-		template<> inline void setField(const std::string & name, void * value, const int index){
-			push<void *>(value);
-			lua_setfield(state, index, name.c_str());
 		}
 
 		inline void setFieldLString(const std::string & name, const std::string & value, size_t len, const int index=-1){
@@ -392,6 +287,124 @@ namespace lutok2 {
 		*/
 
 	};
+
+	/*
+		push methods
+	*/
+
+	template<> inline void Stack::push(int value){
+		lua_pushinteger(state, value);
+	}
+
+	template<> inline void Stack::push(LUA_NUMBER value){
+		lua_pushnumber(state, value);
+	}
+
+	template<> inline void Stack::push(bool value){
+		lua_pushboolean(state, value);
+	}
+
+	template<> inline void Stack::push(const char * value){
+		lua_pushstring(state, value);
+	}
+
+	template<> inline void Stack::push(const std::string & value){
+		lua_pushstring(state, value.c_str());
+	}
+
+	template<> inline void Stack::push(lua_CFunction value){
+		lua_pushcfunction(state, value);
+	}
+
+	template<> inline void Stack::push(Function value){
+		Function ** wrappedFunction = static_cast<Function **>(newUserData(sizeof(Function*)));
+		*wrappedFunction = new Function(value);
+		pushClosure(cxx_function_wrapper, 1);
+	}
+
+	template<> inline void Stack::push(void * value){
+		lua_pushlightuserdata(state, value);
+	}
+
+	template<> inline void Stack::push(cxx_function value){
+		Function ** wrappedFunction = static_cast<Function **>(newUserData(sizeof(Function*)));
+		*wrappedFunction = new Function(value);
+		pushClosure(cxx_function_wrapper, 1);
+	}
+
+	/*
+		to methods
+	*/
+
+	template<> inline bool Stack::to(const int index){
+		return lua_toboolean(state, index) == 1;
+	}
+
+	template<> inline int Stack::to(const int index){
+		return lua_tointeger(state, index);
+	}
+
+	template<> inline LUA_NUMBER Stack::to(const int index){
+		return lua_tonumber(state, index);
+	}
+
+	template<> inline const std::string Stack::to(const int index){
+		const char * tmpString = lua_tostring(state, index);
+		return tmpString;
+	}
+
+	template<> inline void * Stack::to(const int index){
+		return lua_touserdata(state, index);
+	}
+
+	/*
+		setField methods
+	*/
+
+	template<> inline void Stack::setField(const std::string & name, bool value, const int index){
+		push<bool>(value);
+		lua_setfield(state, index, name.c_str());
+	}
+
+	template<> inline void Stack::setField(const std::string & name, int value, const int index){
+		push<int>(value);
+		lua_setfield(state, index, name.c_str());
+	}
+
+	template<> inline void Stack::setField(const std::string & name, LUA_NUMBER value, const int index){
+		push<LUA_NUMBER>(value);
+		lua_setfield(state, index, name.c_str());
+	}
+
+	template<> inline void Stack::setField(const std::string & name, const char * value, const int index){
+		push<const char *>(value);
+		lua_setfield(state, index, name.c_str());
+	}
+
+	template<> inline void Stack::setField(const std::string & name, const std::string & value, const int index){
+		push<const std::string>(value);
+		lua_setfield(state, index, name.c_str());
+	}
+
+	template<> inline void Stack::setField(const std::string & name, lua_CFunction value, const int index){
+		push<lua_CFunction>(value);
+		lua_setfield(state, index, name.c_str());
+	}
+
+	template<> inline void Stack::setField(const std::string & name, Function value, const int index){
+		push<Function>(value);
+		lua_setfield(state, index, name.c_str());
+	}
+
+	template<> inline void Stack::setField(const std::string & name, cxx_function value, const int index){
+		push<cxx_function>(value);
+		lua_setfield(state, index, name.c_str());
+	}
+
+	template<> inline void Stack::setField(const std::string & name, void * value, const int index){
+		push<void *>(value);
+		lua_setfield(state, index, name.c_str());
+	}
 };
 
 #endif
