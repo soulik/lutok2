@@ -8,7 +8,7 @@ namespace lutok2 {
 	typedef int (*cxx_function)(State &);
 	typedef std::function<int(State &)> Function;
 
-	typedef std::unordered_map<std::string, cxx_function> module;
+	typedef std::unordered_map<std::string, cxx_function> Module;
 	static int cxx_function_wrapper(lua_State *);
 
 	static int free_current_state(lua_State *);

@@ -141,6 +141,10 @@ namespace lutok2 {
 			lua_pushlstring(state, value.c_str(), len);
 		}
 
+		inline void pushLString(const std::string & value){
+			lua_pushlstring(state, value.c_str(), value.length());
+		}
+
 		inline void pushVFString(const char * fmt, ...){
 			char buffer[1024];
 			va_list args;
