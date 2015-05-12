@@ -114,7 +114,7 @@ namespace lutok2 {
 			Libraries
 		*/
 
-		void registerLib(const module & members){
+		void registerLib(const Module & members){
 			assert(stack->is<LUA_TTABLE>());
 
 			for (std::unordered_map< std::string, cxx_function >::const_iterator
@@ -125,7 +125,7 @@ namespace lutok2 {
 			}
 		}
 
-		void registerLib(const module & members, const std::string & name, const int nup=0){
+		void registerLib(const Module & members, const std::string & name, const int nup=0){
 			findLib(name, members.size(), nup);
 			registerLib(members);
 			stack->pop(nup);
