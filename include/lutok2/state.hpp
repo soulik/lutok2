@@ -54,6 +54,7 @@ namespace lutok2 {
 		State & operator= (State & arg){
 			state = arg.state;
 			owned = arg.owned;
+			return *this;
 		}
 
 		bool operator== (State & arg){
