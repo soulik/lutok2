@@ -1,7 +1,7 @@
 #ifndef LUTOK2_COMMON_H
 #define LUTOK2_COMMON_H
 
-#include <lua/lua.hpp>
+#include <lua.hpp>
 #include <cassert>
 #include <string>
 #include <exception>
