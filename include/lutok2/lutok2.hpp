@@ -2,6 +2,12 @@
 
 #define LUTOK2_NOT_USED(x) ((void)(x))
 
+#ifdef _MSC_VER
+# define __thread_local __declspec(thread) 
+#else
+# define __thread_local __thread
+#endif
+
 namespace lutok2 {
 	class State;
 
@@ -10,7 +16,7 @@ namespace lutok2 {
 
 	typedef std::unordered_map<std::string, cxx_function> Module;
 	static int cxx_function_wrapper(lua_State *);
-
+	static void storeCurrentState(State *, bool);
 	static int free_current_state(lua_State *);
 
 	class BaseObject {
@@ -30,37 +36,28 @@ namespace lutok2 {
 
 namespace lutok2 {
 
-	static State * getCurrentState(lua_State * L){
-		State * state = nullptr;
-		luaL_getmetatable(L, "_lutok2");
-		if (lua_type(L, -1) == LUA_TTABLE){
-			lua_getfield(L, -1, "State");
-			if (lua_type(L, -1) == LUA_TUSERDATA){
-				state = *(static_cast<State **>(lua_touserdata(L, -1)));
-				lua_pop(L, 2);
-			}else{
-				lua_pop(L, 2);
+	static int cxx_function_wrapper(lua_State * L) {
+		State * state = State::getCurrentState();
+		int upvalueIndex = state->stack->upvalueIndex(1);
+		Function ** originalFunction = reinterpret_cast<Function ** >(state->stack->to<void*>(upvalueIndex));
+		if (originalFunction != nullptr){
+			//Function * originalFunction = *pOriginalFunction;
+			//Function * originalFunction = *(static_cast<Function ** >(state->stack->to<void*>(upvalueIndex)));
+			try{
+				return (**originalFunction)(*state);
+			}catch(const std::exception & e){
+				state->error("Unhandled exception: %s", e.what());
+				return 1;
 			}
 		}else{
-			lua_pop(L, 1);
-		}
-		assert(state != nullptr);
-		return state;
-	}
-
-	static int cxx_function_wrapper(lua_State * L){
-		State * state = getCurrentState(L);
-		Function * originalFunction = *(static_cast<Function ** >(state->stack->to<void*>(state->stack->upvalueIndex(1))));
-		try{
-			return (*originalFunction)(*state);
-		}catch(const std::exception & e){
-			state->error("Unhandled exception: %s", e.what());
+			const std::string traceBack = state->traceback();
+			state->error("Invalid function pointer!: %s", traceBack.c_str());
 			return 1;
 		}
 	}
 
 	static int free_current_state(lua_State * L){
-		State * state = getCurrentState(L);
+		State * state = State::getCurrentState();
 		//free all stored object interfaces
 		for (std::unordered_map<std::string, BaseObject*>::iterator iter = state->interfaces.begin(); iter != state->interfaces.end(); iter++){
 			delete (iter->second);

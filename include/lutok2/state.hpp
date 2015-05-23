@@ -61,22 +61,17 @@ namespace lutok2 {
 			return (arg.state == state);
 		}
 
+		inline static State * getCurrentState(State * newStateInstance = nullptr){
+			static __thread_local State * stateInstance = nullptr;
+			if (newStateInstance){
+				stateInstance = newStateInstance;
+			}
+			return stateInstance;
+		}
+
 		void initState(bool lua_managed = false){
 			stack = new Stack(state);
-			if (stack->newMetatable("_lutok2")){
-				//create local copy of State object in Lua State
-				State ** _state = static_cast<State**> (stack->newUserData(sizeof(State*)));
-				(*_state) = this;
-					//prepare metatable for State object
-					stack->newTable();
-					if (lua_managed) {
-						stack->setField<lua_CFunction>("__gc", free_current_state);
-					}
-						
-					stack->setMetatable();
-				stack->setField("State");
-			}
-			stack->pop();
+			getCurrentState(this);
 		}
 
 		void newState(){
@@ -163,6 +158,40 @@ namespace lutok2 {
 			C * iface = dynamic_cast<C*>(interfaces[name]);
 			assert(iface);
 			return iface;
+		}
+
+		/*
+			Misc
+		*/
+
+		const lua_Debug getInfo(const std::string & what){
+			lua_Debug debugInfo;
+			assert(lua_getinfo(state, what.c_str(), &debugInfo) != 0);
+			return debugInfo;
+		}
+
+		const lua_Debug getStack(const int level){
+			lua_Debug debugInfo;
+			assert(lua_getstack(state, level, &debugInfo) == 1);
+			return debugInfo;
+		}
+
+		const std::string traceback() {
+			lua_Debug info;
+			int level = 0;
+			std::string outputTraceback;
+			char buffer[4096];
+
+			while (lua_getstack(state, level, &info)) {
+				lua_getinfo(state, "nSl", &info);
+
+				sprintf(buffer, "  [%d] %s:%d -- %s [%s]\n",
+					level, info.short_src, info.currentline,
+					(info.name ? info.name : "<unknown>"), info.what);
+				outputTraceback.append(buffer);
+				++level;
+			}
+			return outputTraceback;
 		}
 	};
 };
