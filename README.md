@@ -44,8 +44,8 @@ State
 * __error(const char * fmt, ...)__ - invokes error with formated message in current Lua state.
 * __registerLib(const Module & members)__ - registers library functions. All functions are bound into Lua table which needs to be at top of the stack.
 * __registerLib(const Module & members, const std::string & name, const int nup=0)__ - registers library functions for specific library.
-* __<classname>registerInterface(const std::string & name)__ - registers a C++ class interface and pushes constructor function into stack. You should always use consistent class naming to avoid naming collisions.
-* __getInterface<classname>(const std::string & name)__ - returns C++ class interface based on class name.
+* __\<classname\>registerInterface(const std::string & name)__ - registers a C++ class interface and pushes constructor function into stack. You should always use consistent class naming to avoid naming collisions.
+* __getInterface\<classname\>(const std::string & name)__ - returns C++ class interface based on class name.
 
 Stack
 -----
@@ -73,29 +73,29 @@ Stack
 * __getField(const std::string & key, const int index = -2)__ - retrieves a named field value from a table at specific location.
 * __getField(const int key, const int index = -2)__ - retrieves an indexed field value from a table at specific location.
 * __setField(const std::string & key, const int index = -2)__ - stores element at the top of the stack into table field at specific location.
-* __setField<bool>(const std::string & key, bool value, const int index)__ - stores a boolean value into table field.
-* __setField<int>(const std::string & key, int value, const int index)__ - stores an integer value into table field.
-* __setField<LUA_NUMBER>(const std::string & key, LUA_NUMBER value, const int index)__ - stores a numeric value into table field (a number is usually represented by double data type).
-* __setField<const char *>(const std::string & key, const char * value, const int index)__ - stores null-terminated string value into table field.
-* __setField<const std::string &>(const std::string & key, const std::string & value, const int index)__ - stores null-terminated string value into table field.
-* __setField<lua_CFunction>(const std::string & key, lua_CFunction value, const int index)__ - stores C function into table field.
-* __setField<Function>(const std::string & key, Function value, const int index)__ - stores C++ function into table field (you may use lambda function).
-* __setField<cxx_function>(const std::string & key, cxx_function value, const int index)__ - stores C++ function into table field.
-* __setField<void *>(const std::string & key, void * value, const int index)__ - stores pointer value into table field (it's stored as a lightuser data value).
+* __setField\<bool\>(const std::string & key, bool value, const int index)__ - stores a boolean value into table field.
+* __setField\<int\>(const std::string & key, int value, const int index)__ - stores an integer value into table field.
+* __setField\<LUA_NUMBER\>(const std::string & key, LUA_NUMBER value, const int index)__ - stores a numeric value into table field (a number is usually represented by double data type).
+* __setField\<const char *\>(const std::string & key, const char * value, const int index)__ - stores null-terminated string value into table field.
+* __setField\<const std::string &\>(const std::string & key, const std::string & value, const int index)__ - stores null-terminated string value into table field.
+* __setField\<lua_CFunction\>(const std::string & key, lua_CFunction value, const int index)__ - stores C function into table field.
+* __setField\<Function\>(const std::string & key, Function value, const int index)__ - stores C++ function into table field (you may use lambda function).
+* __setField\<cxx_function\>(const std::string & key, cxx_function value, const int index)__ - stores C++ function into table field.
+* __setField\<void *\>(const std::string & key, void * value, const int index)__ - stores pointer value into table field (it's stored as a lightuser data value).
 * __setFieldLString(const std::string & name, const std::string & value, size_t len, const int index=-1)__ - stores a string value with specific length into table field (a string doesn't have to be null-terminated).
 
 ### Pushing values into stack
-* __push<int>(int value)__ - pushes integer into stack.
-* __push<LUA_NUMBER>(LUA_NUMBER value)__ - pushes a number into stack (usually, a number uses double data type). 
-* __push<bool>(bool value)__ - pushes boolean value into stack.
-* __push<const char *>(const char * value)__ - pushes null-terminated `char*` string into stack.
-* __push<const std::string &>(const std::string & value)__ - pushes null-terminated `std::string` string into stack.
-* __push<void *>(void * value)__ - pushes a pointer into stack (it's used as a lightuser data). 
-* __push<lua_CFunction>(lua_CFunction value)__ - pushes C function into stack.
-* __push<Function>(Function value)__ - pushes a C++ function into stack. You may use lambda function in this case.
-* __push<Function>(Function value, int n)__ - pushes a C++ function into stack with n upvalues. You may use lambda function in this case.
-* __push<cxx_function>(cxx_function value)__ - pushes a C++ function into stack.
-* __push<cxx_function>(cxx_function value, int n)__ - pushes a C++ function into stack with n upvalues.
+* __push\<int\>(int value)__ - pushes integer into stack.
+* __push\<LUA_NUMBER\>(LUA_NUMBER value)__ - pushes a number into stack (usually, a number uses double data type). 
+* __push\<bool\>(bool value)__ - pushes boolean value into stack.
+* __push\<const char *\>(const char * value)__ - pushes null-terminated `char*` string into stack.
+* __push\<const std::string &\>(const std::string & value)__ - pushes null-terminated `std::string` string into stack.
+* __push\<void *\>(void * value)__ - pushes a pointer into stack (it's used as a lightuser data). 
+* __push\<lua_CFunction\>(lua_CFunction value)__ - pushes C function into stack.
+* __push\<Function\>(Function value)__ - pushes a C++ function into stack. You may use lambda function in this case.
+* __push\<Function\>(Function value, int n)__ - pushes a C++ function into stack with n upvalues. You may use lambda function in this case.
+* __push\<cxx_function\>(cxx_function value)__ - pushes a C++ function into stack.
+* __push\<cxx_function\>(cxx_function value, int n)__ - pushes a C++ function into stack with n upvalues.
 * __pushClosure(lua_CFunction fn, int n)__ - pushes C function into stack with n upvalues.
 * __pushLString(const std::string & value, size_t len)__ - pushes a string with specific length into stack (string doesn't have to be null-terminated).
 * __pushLString(const std::string & value)__ - pushes a string into stack (string doesn't have to be null-terminated). A string lLength is obtained from std::string object.
@@ -105,17 +105,17 @@ Stack
 * __pushValue(const int index)__ - pushes a value from specific location to the top the stack.
 
 ### Getting values from stack
-* __to<bool>(const int index)__ - gets a boolean value from stack.
-* __to<int>(const int index)__ - gets an integer value from stack.
-* __to<LUA_NUMBER>(const int index)__ - gets a numeric value from stack (mostly represented with double data type).
-* __to<const std::string>(const int index)__ - gets a string value from stack.
-* __to<void *>(const int index)__ - gets a lightuser data pointer from stack.
+* __to\<bool\>(const int index)__ - gets a boolean value from stack.
+* __to\<int\>(const int index)__ - gets an integer value from stack.
+* __to\<LUA_NUMBER\>(const int index)__ - gets a numeric value from stack (mostly represented with double data type).
+* __to\<const std::string\>(const int index)__ - gets a string value from stack.
+* __to\<void *\>(const int index)__ - gets a lightuser data pointer from stack.
 * __toLString(const int index = -1)__ - gets a string value from stack (the string is not null-terminated).
 
 ### Value manipulation
 * __objLen(const int index = -1)__ - returns value length at specific location.
 * __type(const int index = -1)__ - returns value type (use with Lua `LUA_Ttypename` constants).
-* __is<LUA_Ttypename>(const int index = -1)__ - returns true if there's a value with specified data type at specific location.
+* __is\<LUA_Ttypename\>(const int index = -1)__ - returns true if there's a value with specified data type at specific location.
 * __typeName(const int index = -1)__ - returns string representation of value data type at specific location.
 * __newUserData(size_t size)__ - allocates specific amount (bytes) for full userdata. Userdata value is pushed to the stop of the stack.
 * __checkUserData(const int narg, const std::string& name)__ - checks and returns full userdata pointer with specific name. Otherwise throws an error and returns `nullptr`.
