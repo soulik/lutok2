@@ -15,13 +15,13 @@ Usage
 First of all, you'll need to add lutok2 *include* directory into list of include directories.
 To use it, add following include line and you're good to go.
 
-```system
+```cpp
 #include <lutok2/lutok2.hpp>
 ```
 
 All Lutok2 functions and classes are stored in *lutok2* namespace so you might actually want to use following two lines instead:
 
-```system
+```cpp
 #include <lutok2/lutok2.hpp>
 using namespace lutok2;
 ```
@@ -142,7 +142,7 @@ Examples
 
 Lutok2 usage in a library
 ---------------------------
-```system
+```cpp
 #include <lutok2/lutok2.hpp>
 using namespace lutok2;
 
@@ -280,7 +280,7 @@ extern "C" MyLibrary_DLL_EXPORTED int luaopen_MyLibrary(lua_State * L){
 
 Lutok2 usage in application
 ---------------------------
-```system
+```cpp
 #include "lutok2/lutok2.hpp"
 
 using namespace lutok2;
