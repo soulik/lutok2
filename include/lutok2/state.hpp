@@ -18,13 +18,13 @@ namespace lutok2 {
 			return luaL_findtable(state, index, name.c_str(), szHint);
 		}
 		
-		void findLib(const std::string & name, const int size, const int nup){
+		void findLib(const std::string & name, const size_t size, const int nup){
 			findTable(LUA_REGISTRYINDEX, "_LOADED", 1);
 			stack->getField(name, -1);  /* get _LOADED[name] */
 			if (!stack->is<LUA_TTABLE>()) {  /* not found? */
 				stack->pop();  /* remove previous result */
 				/* try global variable (and create one if it does not exist) */
-				if (findTable(LUA_GLOBALSINDEX, name, size ) != NULL)
+				if (findTable(LUA_GLOBALSINDEX, name, static_cast<int>(size) ) != NULL)
 					error("Name conflict for module " LUA_QS, name.c_str());
 				stack->pushValue(-1);
 				stack->setField(name, -3);  /* _LOADED[name] = new table */

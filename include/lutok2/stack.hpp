@@ -189,7 +189,7 @@ namespace lutok2 {
 			Values
 		*/
 
-		inline const int objLen(const int index = -1){
+		inline const size_t objLen(const int index = -1){
 			return lua_objlen(state, index);
 		}
 
@@ -345,6 +345,10 @@ namespace lutok2 {
 	}
 
 	template<> inline int Stack::to(const int index){
+		return static_cast<int>(lua_tointeger(state, index));
+	}
+
+	template<> inline lua_Integer Stack::to(const int index){
 		return lua_tointeger(state, index);
 	}
 

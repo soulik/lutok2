@@ -184,7 +184,7 @@ namespace lutok2 {
 					int retvals = operator_tostring(state, obj);
 					if (retvals<=0){
 						char buffer[128];
-						sprintf(buffer, "userdata: 0x%08x", static_cast<void*>(obj));
+						sprintf(buffer, "userdata: 0x%p", static_cast<void*>(obj));
 						state.stack->push<const std::string &>(buffer);
 						return 1;
 					}else{
