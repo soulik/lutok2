@@ -348,10 +348,11 @@ namespace lutok2 {
 		return static_cast<int>(lua_tointeger(state, index));
 	}
 
+#if defined(_M_X64) || defined(__amd64__)
 	template<> inline lua_Integer Stack::to(const int index){
 		return lua_tointeger(state, index);
 	}
-
+#endif
 	template<> inline LUA_NUMBER Stack::to(const int index){
 		return lua_tonumber(state, index);
 	}
