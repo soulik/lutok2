@@ -134,7 +134,11 @@ namespace lutok2 {
 			char buffer[1024];
 			va_list args;
 			va_start (args, fmt);
-			vsprintf (buffer, fmt, args);
+#if defined(_WIN32) && defined(_MSC_VER)
+			vsprintf_s(buffer, fmt, args);
+#else
+			vsprintf(buffer, fmt, args);
+#endif
 			luaL_error(state, "%s", buffer);
 			va_end (args);
 		}
@@ -185,9 +189,15 @@ namespace lutok2 {
 			while (lua_getstack(state, level, &info)) {
 				lua_getinfo(state, "nSl", &info);
 
+#if defined(_WIN32) && defined(_MSC_VER)
+				sprintf_s(buffer, "  [%d] %s:%d -- %s [%s]\n",
+					level, info.short_src, info.currentline,
+					(info.name ? info.name : "<unknown>"), info.what);
+#else
 				sprintf(buffer, "  [%d] %s:%d -- %s [%s]\n",
 					level, info.short_src, info.currentline,
 					(info.name ? info.name : "<unknown>"), info.what);
+#endif
 				outputTraceback.append(buffer);
 				++level;
 			}

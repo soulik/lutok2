@@ -149,7 +149,11 @@ namespace lutok2 {
 			char buffer[1024];
 			va_list args;
 			va_start (args, fmt);
-			vsprintf (buffer, fmt, args);
+#if defined(_WIN32) && defined(_MSC_VER)
+			vsprintf_s(buffer, fmt, args);
+#else
+			vsprintf(buffer, fmt, args);
+#endif
 			lua_pushstring(state, buffer);
 			va_end (args);
 		}
