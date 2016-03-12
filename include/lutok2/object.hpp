@@ -184,7 +184,11 @@ namespace lutok2 {
 					int retvals = operator_tostring(state, obj);
 					if (retvals<=0){
 						char buffer[128];
+#if defined(_WIN32) && defined(_MSC_VER)
+						sprintf_s(buffer, "userdata: 0x%p", static_cast<void*>(obj));
+#else
 						sprintf(buffer, "userdata: 0x%p", static_cast<void*>(obj));
+#endif
 						state.stack->push<const std::string &>(buffer);
 						return 1;
 					}else{
