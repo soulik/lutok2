@@ -37,22 +37,32 @@ namespace lutok2 {
 namespace lutok2 {
 
 	static int cxx_function_wrapper(lua_State * L) {
-		State * state = State::getCurrentState();
+		State * state = reinterpret_cast<State*>(lua_touserdata(L, lua_upvalueindex(1)));
 		Stack * stack = state->stack;
+		/*
+		State * state1 = State::getCurrentState();
+		Stack * stack1 = state1->stack;
+		const lua_Debug info1 = state1->getInfo("u");
+
+		State _state2 = State(L, false);
+		State * state2 = &_state2;
+		Stack * stack2 = state2->stack;
+		const lua_Debug info2 = state2->getInfo("u");
+
+		State * state = state2;
+		Stack * stack = stack2;
+		*/
 		const lua_Debug info = state->getInfo("u");
-		
+
 		int upvalues = info.nups;
 		if (upvalues >= 1){
-			int upvalueIndex = stack->upvalueIndex(1);
+			int upvalueIndex = stack->upvalueIndex(2);
 			stack->pushValue(upvalueIndex);
 			int t = stack->type(-1);
 			if (t == LUA_TUSERDATA){
 				Function ** originalFunction = reinterpret_cast<Function **>(stack->to<void*>(-1));
 				stack->pop(1);
-				//Function ** originalFunction = reinterpret_cast<Function ** >(state->stack->to<void*>(upvalueIndex));
 				if (originalFunction != nullptr){
-					//Function * originalFunction = *pOriginalFunction;
-					//Function * originalFunction = *(static_cast<Function ** >(state->stack->to<void*>(upvalueIndex)));
 					try{
 						return (**originalFunction)(*state);
 					}

@@ -8,6 +8,7 @@ namespace lutok2 {
 	class Stack {
 	private:
 		lua_State * state;
+		State * stateObj;
 		/*
 			C++ function wrapper
 		*/
@@ -15,9 +16,16 @@ namespace lutok2 {
 	public:
 		Stack(){
 			this->state = nullptr;
+			this->stateObj = nullptr;
 		}
 		explicit Stack(lua_State * state){
 			this->state = state;
+			this->stateObj = nullptr;
+		}
+
+		explicit Stack(lua_State * state, State * stateObj){
+			this->state = state;
+			this->stateObj = stateObj;
 		}
 
 		/*
@@ -122,15 +130,17 @@ namespace lutok2 {
 		template<typename T> inline void setField(const std::string & name, T value, const int index = -2);
 
 		inline void push(Function value, int n){
+			lua_pushlightuserdata(state, stateObj);
 			Function ** wrappedFunction = static_cast<Function **>(newUserData(sizeof(Function*)));
 			*wrappedFunction = new Function(value);
-			pushClosure(cxx_function_wrapper, n + 1);
+			pushClosure(cxx_function_wrapper, n + 2);
 		}
 
 		inline void push(cxx_function value, int n){
+			lua_pushlightuserdata(state, stateObj);
 			Function ** wrappedFunction = static_cast<Function **>(newUserData(sizeof(Function*)));
 			*wrappedFunction = new Function(value);
-			pushClosure(cxx_function_wrapper, n + 1);
+			pushClosure(cxx_function_wrapper, n + 2);
 		}
 
 		inline void pushClosure(lua_CFunction fn, int n){

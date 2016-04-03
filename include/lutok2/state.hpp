@@ -70,8 +70,10 @@ namespace lutok2 {
 		}
 
 		void initState(bool lua_managed = false){
-			stack = new Stack(state);
-			getCurrentState(this);
+			stack = new Stack(state, this);
+			if (lua_managed){
+				getCurrentState(this);
+			}
 		}
 
 		void newState(){
