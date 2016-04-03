@@ -55,18 +55,24 @@ namespace lutok2 {
 			}else if (stack->is<LUA_TSTRING>(1)){
 				const std::string key = stack->to<const std::string>(1);
 				stack->remove(1);
-				try{
-					PropertyPair & pair = properties.at(key);
-					return (this->*(pair.first))(state, object);
-				}catch(std::out_of_range &){
-					try{
-						Method & method = methods.at(key);
-						stack->push<Function>([=, &state](State & state) -> int {
-							return (this->*(method))(state, object);
-						});
-						return 1;
-					}catch(std::out_of_range &){
-						return 0;
+				//traverse property and method maps
+				{
+					PropertyMap::iterator propertyIterator = properties.find(key);
+					if (propertyIterator != properties.end()){
+						PropertyPair & pair = propertyIterator->second;
+						return (this->*(pair.first))(state, object);
+					}
+					else{
+						MethodMap::iterator methodIterator = methods.find(key);
+						if (methodIterator != methods.end()){
+							Method & method = methodIterator->second;
+							stack->push<Function>([=, &state](State & state) -> int {
+								return (this->*(method))(state, object);
+							});
+							return 1;
+						}else{
+							return 0;
+						}
 					}
 				}
 			}
@@ -80,11 +86,16 @@ namespace lutok2 {
 			}else if (stack->is<LUA_TSTRING>(1)){
 				const std::string key = stack->to<const std::string>(1);
 				stack->remove(1);
-				try{
-					PropertyPair & pair = properties.at(key);
-					(this->*(pair.second))(state, object);
-				}catch(std::out_of_range &){
-					return 0;
+				//traverse property map
+				{
+					PropertyMap::iterator propertyIterator = properties.find(key);
+					if (propertyIterator != properties.end()){
+						PropertyPair & pair = propertyIterator->second;
+						return (this->*(pair.second))(state, object);
+					}
+					else{
+						return 0;
+					}
 				}
 			}
 			return 0;
@@ -184,11 +195,7 @@ namespace lutok2 {
 					int retvals = operator_tostring(state, obj);
 					if (retvals<=0){
 						char buffer[128];
-#if defined(_WIN32) && defined(_MSC_VER)
-						sprintf_s(buffer, "userdata: 0x%p", static_cast<void*>(obj));
-#else
 						sprintf(buffer, "userdata: 0x%p", static_cast<void*>(obj));
-#endif
 						state.stack->push<const std::string &>(buffer);
 						return 1;
 					}else{
@@ -223,11 +230,8 @@ namespace lutok2 {
 			ObjWrapper * wrapper = static_cast<ObjWrapper *>(stack->newUserData(sizeof(ObjWrapper)));
 			wrapper->instance = instance;
 			wrapper->owned = manage;
-			int top = stack->getTop();
 			prepareMetatable();
-			top = stack->getTop();
 			stack->setMetatable();
-			top = stack->getTop();
 		}
 
 		C * get(const int index){

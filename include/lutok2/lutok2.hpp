@@ -38,20 +38,43 @@ namespace lutok2 {
 
 	static int cxx_function_wrapper(lua_State * L) {
 		State * state = State::getCurrentState();
-		int upvalueIndex = state->stack->upvalueIndex(1);
-		Function ** originalFunction = reinterpret_cast<Function ** >(state->stack->to<void*>(upvalueIndex));
-		if (originalFunction != nullptr){
-			//Function * originalFunction = *pOriginalFunction;
-			//Function * originalFunction = *(static_cast<Function ** >(state->stack->to<void*>(upvalueIndex)));
-			try{
-				return (**originalFunction)(*state);
-			}catch(const std::exception & e){
-				state->error("Unhandled exception: %s", e.what());
+		Stack * stack = state->stack;
+
+		int upvalues = stack->getTop();
+		if (upvalues >= 1){
+			int upvalueIndex = stack->upvalueIndex(1);
+			stack->pushValue(upvalueIndex);
+			int t = stack->type(-1);
+			if (t == LUA_TUSERDATA){
+				Function ** originalFunction = reinterpret_cast<Function **>(stack->to<void*>(-1));
+				stack->pop(1);
+				//Function ** originalFunction = reinterpret_cast<Function ** >(state->stack->to<void*>(upvalueIndex));
+				if (originalFunction != nullptr){
+					//Function * originalFunction = *pOriginalFunction;
+					//Function * originalFunction = *(static_cast<Function ** >(state->stack->to<void*>(upvalueIndex)));
+					try{
+						return (**originalFunction)(*state);
+					}
+					catch (const std::exception & e){
+						state->error("Unhandled exception: %s", e.what());
+						return 1;
+					}
+				}
+				else{
+					const std::string traceBack = state->traceback();
+					state->error("Invalid function pointer!: %s", traceBack.c_str());
+					return 1;
+				}
+			}
+			else{
+				const std::string traceBack = state->traceback();
+				state->error("Stack corrupted!: %s", traceBack.c_str());
 				return 1;
 			}
-		}else{
+		}
+		else{
 			const std::string traceBack = state->traceback();
-			state->error("Invalid function pointer!: %s", traceBack.c_str());
+			state->error("Closure upvalues corrupted!: %s", traceBack.c_str());
 			return 1;
 		}
 	}
