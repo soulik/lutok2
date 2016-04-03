@@ -39,8 +39,9 @@ namespace lutok2 {
 	static int cxx_function_wrapper(lua_State * L) {
 		State * state = State::getCurrentState();
 		Stack * stack = state->stack;
-
-		int upvalues = stack->getTop();
+		const lua_Debug info = state->getInfo("u");
+		
+		int upvalues = info.nups;
 		if (upvalues >= 1){
 			int upvalueIndex = stack->upvalueIndex(1);
 			stack->pushValue(upvalueIndex);

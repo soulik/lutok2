@@ -170,6 +170,7 @@ namespace lutok2 {
 
 		const lua_Debug getInfo(const std::string & what){
 			lua_Debug debugInfo;
+			assert(lua_getstack(state, 0, &debugInfo) == 1);
 			assert(lua_getinfo(state, what.c_str(), &debugInfo) != 0);
 			return debugInfo;
 		}
