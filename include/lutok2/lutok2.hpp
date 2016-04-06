@@ -37,26 +37,13 @@ namespace lutok2 {
 namespace lutok2 {
 
 	static int cxx_function_wrapper(lua_State * L) {
-		State * state = reinterpret_cast<State*>(lua_touserdata(L, lua_upvalueindex(1)));
-		Stack * stack = state->stack;
-		/*
-		State * state1 = State::getCurrentState();
-		Stack * stack1 = state1->stack;
-		const lua_Debug info1 = state1->getInfo("u");
-
-		State _state2 = State(L, false);
-		State * state2 = &_state2;
-		Stack * stack2 = state2->stack;
-		const lua_Debug info2 = state2->getInfo("u");
-
-		State * state = state2;
-		Stack * stack = stack2;
-		*/
-		const lua_Debug info = state->getInfo("u");
+		State state = State(L, false);
+		Stack * stack = state.stack;
+		const lua_Debug info = state.getInfo("u");
 
 		int upvalues = info.nups;
 		if (upvalues >= 1){
-			int upvalueIndex = stack->upvalueIndex(2);
+			int upvalueIndex = stack->upvalueIndex(1);
 			stack->pushValue(upvalueIndex);
 			int t = stack->type(-1);
 			if (t == LUA_TUSERDATA){
@@ -64,33 +51,34 @@ namespace lutok2 {
 				stack->pop(1);
 				if (originalFunction != nullptr){
 					try{
-						return (**originalFunction)(*state);
+						return (**originalFunction)(state);
 					}
 					catch (const std::exception & e){
-						state->error("Unhandled exception: %s", e.what());
+						state.error("Unhandled exception: %s", e.what());
 						return 1;
 					}
 				}
 				else{
-					const std::string traceBack = state->traceback();
-					state->error("Invalid function pointer!: %s", traceBack.c_str());
+					const std::string traceBack = state.traceback();
+					state.error("Invalid function pointer!: %s", traceBack.c_str());
 					return 1;
 				}
 			}
 			else{
-				const std::string traceBack = state->traceback();
-				state->error("Stack corrupted!: %s", traceBack.c_str());
+				const std::string traceBack = state.traceback();
+				state.error("Stack corrupted!: %s", traceBack.c_str());
 				return 1;
 			}
 		}
 		else{
-			const std::string traceBack = state->traceback();
-			state->error("Closure upvalues corrupted!: %s", traceBack.c_str());
+			const std::string traceBack = state.traceback();
+			state.error("Closure upvalues corrupted!: %s", traceBack.c_str());
 			return 1;
 		}
 	}
 
 	static int free_current_state(lua_State * L){
+		/*
 		State * state = State::getCurrentState();
 		//free all stored object interfaces
 		for (std::unordered_map<std::string, BaseObject*>::iterator iter = state->interfaces.begin(); iter != state->interfaces.end(); iter++){
@@ -98,6 +86,7 @@ namespace lutok2 {
 		}
 
 		delete state;
+		*/
 		return 0;
 	}
 };

@@ -5,11 +5,16 @@ namespace lutok2 {
 	class StackDebugger;
 	class BaseObject;
 
+	struct StateData {
+		std::unordered_map<std::string, BaseObject*> interfaces;
+	};
+
+	__thread_local static StateData * localStateData = nullptr;
+
 	class State {
 	friend class Stack;
 	public:
 		Stack * stack;
-		std::unordered_map<std::string, BaseObject*> interfaces;
 	private:
 		lua_State * state;
 		bool owned;
@@ -60,7 +65,7 @@ namespace lutok2 {
 		bool operator== (State & arg){
 			return (arg.state == state);
 		}
-
+		/*
 		inline static State * getCurrentState(State * newStateInstance = nullptr){
 			static __thread_local State * stateInstance = nullptr;
 			if (newStateInstance){
@@ -68,12 +73,15 @@ namespace lutok2 {
 			}
 			return stateInstance;
 		}
+		*/
 
 		void initState(bool lua_managed = false){
-			stack = new Stack(state, this);
+			stack = new Stack(&state, this);
+			/*
 			if (lua_managed){
 				getCurrentState(this);
 			}
+			*/
 		}
 
 		void newState(){
@@ -151,17 +159,26 @@ namespace lutok2 {
 
 		template<class C> void registerInterface(const std::string & name){
 			BaseObject * _interface = new C(this);
-			interfaces[name] = _interface;
+			if (!localStateData){
+				localStateData = new __thread_local StateData;
+			}
+			localStateData->interfaces[name] = _interface;
 			_interface->getConstructor();
 		}
 
 		void registerInterface(const std::string & name, BaseObject * _interface){
-			interfaces[name] = _interface;
+			if (!localStateData){
+				localStateData = new __thread_local StateData;
+			}
+			localStateData->interfaces[name] = _interface;
 			_interface->getConstructor();
 		}
 		
 		template<class C> C * getInterface(const std::string & name){
-			C * iface = dynamic_cast<C*>(interfaces[name]);
+			if (!localStateData){
+				localStateData = new __thread_local StateData;
+			}
+			C * iface = dynamic_cast<C*>(localStateData->interfaces[name]);
 			assert(iface);
 			return iface;
 		}
