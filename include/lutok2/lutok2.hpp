@@ -15,6 +15,7 @@ namespace lutok2 {
 	typedef std::function<int(State &)> Function;
 
 	typedef std::unordered_map<std::string, cxx_function> Module;
+	typedef std::vector<int> StackContent;
 	static int cxx_function_wrapper(lua_State *);
 	static void storeCurrentState(State *, bool);
 	static int free_current_state(lua_State *);
@@ -39,7 +40,8 @@ namespace lutok2 {
 	static int cxx_function_wrapper(lua_State * L) {
 		State state = State(L, false);
 		Stack * stack = state.stack;
-		const lua_Debug info = state.getInfo("u");
+		const lua_Debug info = state.getInfo("nSlu");
+		//StackContent stackContent = stack->getStackContent();
 
 		int upvalues = info.nups;
 		if (upvalues >= 1){

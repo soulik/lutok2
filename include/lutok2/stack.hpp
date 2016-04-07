@@ -8,6 +8,7 @@ namespace lutok2 {
 	class Stack {
 	private:
 		lua_State ** state;
+		lua_State ** originalState;
 		State * stateObj;
 		/*
 			C++ function wrapper
@@ -17,14 +18,17 @@ namespace lutok2 {
 		Stack(){
 			this->stateObj = nullptr;
 			this->state = nullptr;
+			this->originalState = nullptr;
 		}
-		explicit Stack(lua_State ** state){
+		explicit Stack(lua_State ** state, lua_State ** originalState){
 			this->state = state;
+			this->originalState = originalState;
 			this->stateObj = nullptr;
 		}
 
-		explicit Stack(lua_State ** state, State * stateObj){
+		explicit Stack(lua_State ** state, lua_State ** originalState, State * stateObj){
 			this->state = state;
+			this->originalState = originalState;
 			this->stateObj = stateObj;
 		}
 
@@ -217,6 +221,18 @@ namespace lutok2 {
 			return std::string(lua_typename(*state, index));
 		}
 
+		inline bool inThread(int index, lua_State ** currentState){
+			const int t = lua_type(*state, index);
+			if (t == LUA_TTHREAD){
+				*currentState = lua_tothread(*state, index);
+				return true;
+			}
+			else{
+				*currentState = *state;
+				return false;
+			}
+		}
+
 		inline void * newUserData(size_t size){
 			return lua_newuserdata(*state, size);
 		}
@@ -230,7 +246,9 @@ namespace lutok2 {
 		}
 
 		inline void * getUserData(const int narg, const std::string& name){
-			if (lua_type(*state, narg) == LUA_TUSERDATA){
+			int t = lua_type(*state, narg);
+
+			if (t == LUA_TUSERDATA){
 				lua_getmetatable(*state, narg);
 				luaL_getmetatable(*state, name.c_str());
 				if (lua_equal(*state, -2, -1) == 1){
@@ -295,6 +313,15 @@ namespace lutok2 {
 
 		inline void regValue(const int n){
 			lua_rawgeti(*state, LUA_REGISTRYINDEX, n);
+		}
+
+		StackContent getStackContent(){
+			StackContent stackContent;
+			int top = lua_gettop(*state);
+			for (int i = 1; i < top; i++){
+				stackContent.push_back(lua_type(*state, i));
+			}
+			return stackContent;
 		}
 		/*
 		StackDebugger debug(){

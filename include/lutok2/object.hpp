@@ -19,23 +19,26 @@ namespace lutok2 {
 			C * instance;
 			bool owned;
 		} ObjWrapper;
-	private:
-		State * state;
+	public:
+		lua_State * luaState;
 	protected:
 		inline ObjWrapper * getWrapped(const int index){
-			Stack * stack = state->stack;
+			State state = State(luaState, false);
+			Stack * stack = state.stack;
 			ObjWrapper * wrapper = static_cast<ObjWrapper *>(stack->getUserData(index, typeid(C).name()));
 			return wrapper;
 		}
 
 		inline ObjWrapper * getWrapped(const int index, const std::string & typeName){
-			Stack * stack = state->stack;
+			State state = State(luaState, false);
+			Stack * stack = state.stack;
 			ObjWrapper * wrapper = static_cast<ObjWrapper *>(stack->getUserData(index, typeName));
 			return wrapper;
 		}
 
 		ObjWrapper * getWrapped(const int index, const std::forward_list<std::string> & typeNames){
-			Stack * stack = state->stack;
+			State state = State(luaState, false);
+			Stack * stack = state.stack;
 			ObjWrapper * wrapper = nullptr;
 
 			for (std::forward_list<std::string>::const_iterator iter = typeNames.begin(); iter != typeNames.end(); iter++){
@@ -107,7 +110,10 @@ namespace lutok2 {
 			this->properties = object.properties;
 		}
 		explicit Object(State * state){
-			this->state = state;
+			this->luaState = state->state;
+		}
+		explicit Object(lua_State * state){
+			this->luaState = state;
 		}
 		virtual ~Object(){
 
@@ -123,74 +129,94 @@ namespace lutok2 {
 		};
 
 		void prepareMetatable(){
-			Stack * stack = state->stack;
+			State state = State(luaState, false);
+			Stack * stack = state.stack;
 			const char * tname = typeid(C).name();
 			if (stack->newMetatable(tname)){
 				stack->setField("typename", tname);
 				stack->setField<Function>("__gc", [this](State & state) -> int {
-					ObjWrapper * wrapped =  getWrapped(1);
+					luaState = state.state;
+					ObjWrapper * wrapped = getWrapped(1);
 					if (wrapped->owned){
 						destructor(state, wrapped->instance);
 					}
 					return 0;
 				});
 				stack->setField<Function>("__typename", [this](State & state) -> int {
+					luaState = state.state;
 					//C * object = get(1);
 					state.stack->push(typeid(C).name());
 					return 1;
 				});
 
 				stack->setField<Function>("__index", [this](State & state) -> int {
+					luaState = state.state;
 					C * object = get(1);
+					int t = state.stack->type(1);
 					state.stack->remove(1);
 					return index(state, object);
 				});
 				stack->setField<Function>("__newindex", [this](State & state) -> int {
+					luaState = state.state;
 					C * object = get(1);
 					state.stack->remove(1);
 					return newindex(state, object);
 				});
 
 				stack->setField<Function>("__add", [this](State & state) -> int {
+					luaState = state.state;
 					return operator_add(state, get(1), get(2));
 				});
 				stack->setField<Function>("__sub", [this](State & state) -> int {
+					luaState = state.state;
 					return operator_sub(state, get(1), get(2));
 				});
 				stack->setField<Function>("__mul", [this](State & state) -> int {
+					luaState = state.state;
 					return operator_mul(state, get(1), get(2));
 				});
 				stack->setField<Function>("__div", [this](State & state) -> int {
+					luaState = state.state;
 					return operator_div(state, get(1), get(2));
 				});
 				stack->setField<Function>("__mod", [this](State & state) -> int {
+					luaState = state.state;
 					return operator_mod(state, get(1), get(2));
 				});
 				stack->setField<Function>("__pow", [this](State & state) -> int {
+					luaState = state.state;
 					return operator_pow(state, get(1), get(2));
 				});
 				stack->setField<Function>("__unm", [this](State & state) -> int {
+					luaState = state.state;
 					return operator_unm(state, get(1));
 				});
 				stack->setField<Function>("__concat", [this](State & state) -> int {
+					luaState = state.state;
 					return operator_concat(state, get(1), get(2));
 				});
 				stack->setField<Function>("__len", [this](State & state) -> int {
+					luaState = state.state;
 					return operator_len(state, get(1));
 				});
 				stack->setField<Function>("__eq", [this](State & state) -> int {
+					luaState = state.state;
 					return operator_eq(state, get(1), get(2));
 				});
 				stack->setField<Function>("__lt", [this](State & state) -> int {
+					luaState = state.state;
 					return operator_lt(state, get(1), get(2));
 				});
 				stack->setField<Function>("__le", [this](State & state) -> int {
+					luaState = state.state;
 					return operator_le(state, get(1), get(2));
 				});
 				stack->setField<Function>("__call", [this](State & state) -> int {
+					luaState = state.state;
 					return operator_call(state, get(1));
 				});
 				stack->setField<Function>("__tostring", [this](State & state) -> int {
+					luaState = state.state;
 					C * obj = get(1);
 					int retvals = operator_tostring(state, obj);
 					if (retvals<=0){
@@ -206,7 +232,8 @@ namespace lutok2 {
 		}
 
 		void getConstructor(){
-			Stack * stack = state->stack;
+			State state = State(luaState, false);
+			Stack * stack = state.stack;
 			stack->newTable();
 			//metatable
 				stack->newTable();
@@ -226,7 +253,8 @@ namespace lutok2 {
 		}
 
 		void push(C * instance, const bool manage = false){
-			Stack * stack = state->stack;
+			State state = State(luaState, false);
+			Stack * stack = state.stack;
 			ObjWrapper * wrapper = static_cast<ObjWrapper *>(stack->newUserData(sizeof(ObjWrapper)));
 			wrapper->instance = instance;
 			wrapper->owned = manage;

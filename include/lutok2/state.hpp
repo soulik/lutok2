@@ -9,14 +9,13 @@ namespace lutok2 {
 		std::unordered_map<std::string, BaseObject*> interfaces;
 	};
 
-	__thread_local static StateData * localStateData = nullptr;
-
 	class State {
 	friend class Stack;
 	public:
 		Stack * stack;
-	private:
 		lua_State * state;
+		lua_State * originalState;
+	private:
 		bool owned;
 
 		inline const char * findTable(const int index, const std::string & name, int szHint){
@@ -39,12 +38,14 @@ namespace lutok2 {
 		}
 	public:
 		State(bool lua_managed = false){
+			originalState = nullptr;
 			newState();
 			initState(lua_managed);
 		}
 
 		explicit State(lua_State * state, bool lua_managed = true){
 			this->state = state;
+			originalState = nullptr;
 			owned = false;
 			initState(lua_managed);
 		}
@@ -76,7 +77,7 @@ namespace lutok2 {
 		*/
 
 		void initState(bool lua_managed = false){
-			stack = new Stack(&state, this);
+			stack = new Stack(&state, &originalState, this);
 			/*
 			if (lua_managed){
 				getCurrentState(this);
@@ -157,27 +158,29 @@ namespace lutok2 {
 			Class interfaces
 		*/
 
+		static StateData * getLocalStateData(){
+			static __thread_local StateData * localStateData = nullptr;
+			if (!localStateData) {
+				localStateData = new StateData;
+			}
+			return localStateData;
+		}
+
 		template<class C> void registerInterface(const std::string & name){
 			BaseObject * _interface = new C(this);
-			if (!localStateData){
-				localStateData = new __thread_local StateData;
-			}
+			StateData * localStateData = getLocalStateData();
 			localStateData->interfaces[name] = _interface;
 			_interface->getConstructor();
 		}
 
 		void registerInterface(const std::string & name, BaseObject * _interface){
-			if (!localStateData){
-				localStateData = new __thread_local StateData;
-			}
+			StateData * localStateData = getLocalStateData();
 			localStateData->interfaces[name] = _interface;
 			_interface->getConstructor();
 		}
 		
 		template<class C> C * getInterface(const std::string & name){
-			if (!localStateData){
-				localStateData = new __thread_local StateData;
-			}
+			StateData * localStateData = getLocalStateData();
 			C * iface = dynamic_cast<C*>(localStateData->interfaces[name]);
 			assert(iface);
 			return iface;
