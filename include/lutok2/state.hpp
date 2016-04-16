@@ -106,14 +106,49 @@ namespace lutok2 {
 		*/
 
 		void loadFile(const std::string & fileName){
-			if (luaL_loadfile(state, fileName.c_str()) != 0){
-				throw std::runtime_error("Can't open file: "+ fileName);
+			int rc = luaL_loadfile(state, fileName.c_str());
+			if (rc != 0){
+				std::string errorMessage;
+
+				if (rc == LUA_ERRSYNTAX){
+					errorMessage = "Syntax error";
+				}
+				else if (rc == LUA_ERRMEM){
+					errorMessage = "Memory allocation error";
+				}
+				else if (rc == LUA_ERRFILE){
+					errorMessage = "Can't open file: " + fileName;
+				}
+				else{
+					errorMessage = "Unknown error";
+				}
+				if (lua_type(state, -1) == LUA_TSTRING){
+					const char * luaMessage = lua_tostring(state, -1);
+					errorMessage = errorMessage + "\n" + luaMessage;
+				}
+				throw std::runtime_error(errorMessage);
 			}
 		}
 
 		void loadString(const std::string & chunk){
-			if (luaL_loadstring(state, chunk.c_str()) != 0){
-				throw std::runtime_error("Can't load a chunk");
+			int rc = luaL_loadstring(state, chunk.c_str());
+			if (rc != 0){
+				std::string errorMessage;
+
+				if (rc == LUA_ERRSYNTAX){
+					errorMessage = "Syntax error";
+				}
+				else if (rc == LUA_ERRMEM){
+					errorMessage = "Memory allocation error";
+				}
+				else{
+					errorMessage = "Unknown error";
+				}
+				if (lua_type(state, -1) == LUA_TSTRING){
+					const char * luaMessage = lua_tostring(state, -1);
+					errorMessage = errorMessage + "\n" + luaMessage;
+				}
+				throw std::runtime_error(errorMessage);
 			}
 		}
 
