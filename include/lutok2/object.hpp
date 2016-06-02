@@ -60,13 +60,13 @@ namespace lutok2 {
 				stack->remove(1);
 				//traverse property and method maps
 				{
-					PropertyMap::iterator propertyIterator = properties.find(key);
+					typename PropertyMap::iterator propertyIterator = properties.find(key);
 					if (propertyIterator != properties.end()){
 						PropertyPair & pair = propertyIterator->second;
 						return (this->*(pair.first))(state, object);
 					}
 					else{
-						MethodMap::iterator methodIterator = methods.find(key);
+						typename MethodMap::iterator methodIterator = methods.find(key);
 						if (methodIterator != methods.end()){
 							Method & method = methodIterator->second;
 							stack->push<Function>([=, &state](State & state) -> int {
@@ -91,7 +91,7 @@ namespace lutok2 {
 				stack->remove(1);
 				//traverse property map
 				{
-					PropertyMap::iterator propertyIterator = properties.find(key);
+					typename PropertyMap::iterator propertyIterator = properties.find(key);
 					if (propertyIterator != properties.end()){
 						PropertyPair & pair = propertyIterator->second;
 						return (this->*(pair.second))(state, object);
