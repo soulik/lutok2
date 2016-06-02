@@ -227,14 +227,17 @@ namespace lutok2 {
 
 		const lua_Debug getInfo(const std::string & what){
 			lua_Debug debugInfo;
-			assert(lua_getstack(state, 0, &debugInfo) == 1);
-			assert(lua_getinfo(state, what.c_str(), &debugInfo) != 0);
+			int rc = lua_getstack(state, 0, &debugInfo);
+			assert(rc == 1);
+			rc = lua_getinfo(state, what.c_str(), &debugInfo);
+			assert(rc != 0);
 			return debugInfo;
 		}
 
 		const lua_Debug getStack(const int level){
 			lua_Debug debugInfo;
-			assert(lua_getstack(state, level, &debugInfo) == 1);
+			int rc = lua_getstack(state, level, &debugInfo);
+			assert(rc == 1);
 			return debugInfo;
 		}
 
