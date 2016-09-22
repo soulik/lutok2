@@ -1,4 +1,4 @@
-﻿testing()
+testing()
 testing()
 local t1 = testObj('test1')
 local t2 = testObj('test2')
