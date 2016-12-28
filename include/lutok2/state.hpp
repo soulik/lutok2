@@ -130,8 +130,8 @@ namespace lutok2 {
 			}
 		}
 
-		void loadString(const std::string & chunk){
-			int rc = luaL_loadstring(state, chunk.c_str());
+		void loadString(const std::string & chunk, const std::string & chunkName = ""){
+			int rc = luaL_loadbuffer(state, chunk.c_str(), chunk.length(), chunkName.c_str());
 			if (rc != 0){
 				std::string errorMessage;
 

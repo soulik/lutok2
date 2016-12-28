@@ -201,6 +201,22 @@ namespace lutok2 {
 			luaL_unref(*state, index, ref);
 		}
 
+		const std::string dumpFunction(const int index) {
+			std::string buffer;
+			lua_Writer fn = [](lua_State *L, const void* p, size_t sz, void* ud) -> int {
+				std::string * buffer = reinterpret_cast<std::string *>(ud);
+				const char * data = reinterpret_cast<const char*>(p);
+				buffer->append(std::string(data, sz));
+				return 0;
+			};
+
+			int rc = 0;
+			pushValue(index);
+			rc = lua_dump(*state, fn, &buffer);
+			pop(1);
+			return buffer;
+		}
+
 		/*
 			Values
 		*/
